@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Pair Generator</title>
+    <script>
+        async function generateKeys() {
+            const keyType = document.querySelector('input[name="keyType"]:checked').value;
+            const response = await fetch('/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ keyType })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                document.getElementById('result').innerHTML = `
+                    <p><strong>Private Key:</strong> ${data.privateKey}</p>
+                    <p><strong>Address:</strong> ${data.address}</p>
+                `;
+            } else {
+                document.getElementById('result').innerText = data.error;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Key Pair Generator</h1>
+    <form onsubmit="event.preventDefault(); generateKeys();">
+        <label>
+            <input type="radio" name="keyType" value="btc" required> Bitcoin
+        </label>
+        <label>
+            <input type="radio" name="keyType" value="eth"> Ethereum
+        </label>
+        <button type="submit">Generate</button>
+    </form>
+    <div id="result" style="margin-top: 20px;"></div>
+</body>
+</html>
